@@ -9,7 +9,7 @@ import { Recommendation } from "../Model/recommendation.model.js";
 import { ChatSession } from "../Model/chatbot.model.js";
 import { ATSScanHistory } from "../Model/atsScanHistory.model.js";
 import { uploadPdf, cloudinary } from "../utils/cloudinary.js";
-import { SendMail } from "../utils/nodemailer.js";
+import { sendEmail } from "../utils/sendEmail.js";
 import { verifyEmail } from "../utils/templates/loginVerifyMail.js";
 import { ExtractText } from "../utils/pdf-parse.js";
 import { detectResumeType } from "../utils/atsScoring.js";
@@ -436,7 +436,16 @@ export const sendVerificationUser = async (req, res) => {
   ); // 5 minutes
   let verifyLink = `${envConfig.backendUrl}/auth/verify-token?email=${user.email}&token=${token}`;
   const htmlContent = verifyEmail(user.email, verifyLink);
-  SendMail({ email: user.email, subject: "Verify User", html: htmlContent });
+  const result = await sendEmail({
+    to: user.email,
+    subject: "Verify User",
+    html: htmlContent,
+  });
+
+  if (!result.success) {
+    return res.status(500).json({ message: "Failed to send verification email" });
+  }
+
   return res
     .status(200)
     .json({ message: "Verification email sent successfully" });

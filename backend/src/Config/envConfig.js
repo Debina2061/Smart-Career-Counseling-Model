@@ -11,8 +11,7 @@
 //     googleClinet: process.env.GOOGLE_CLIENT_KEY,
 //     googleSecretClient: process.env.GOOGLE_SECRET_CLIENT_KEY,
 //     jwtSecretToken: process.env.JWT_SECRET_TOKEN,
-//     emailUser:process.env.EMAIL_USER,
-//     emailPassword: process.env.EMAIL_NODEMAILER_PASSWORD,
+//     resendApiKey: process.env.RESEND_API_KEY,
 //     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
 //     cloudSecret: process.env.CLOUDINARY_API_SECRET,
 //     cloudKey: process.env.CLOUDINARY_API_KEY,
@@ -46,8 +45,7 @@ export const envConfig = {
     googleSecretClient: process.env.GOOGLE_SECRET_CLIENT_KEY,
 
     jwtSecretToken: process.env.JWT_SECRET_TOKEN,
-    emailUser: process.env.EMAIL_USER,
-    emailPassword: process.env.EMAIL_NODEMAILER_PASSWORD,
+    resendApiKey: process.env.RESEND_API_KEY,
 
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     cloudSecret: process.env.CLOUDINARY_API_SECRET,

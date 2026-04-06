@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI, setAuthToken, removeAuthToken, isAuthenticated as checkAuth } from '../utils/api';
+import { authAPI, setAuthToken, removeAuthToken } from '../utils/api';
 
 const AuthContext = createContext(null);
 
@@ -11,16 +11,14 @@ export const AuthProvider = ({ children }) => {
   // Check if user is authenticated on mount
   useEffect(() => {
     const initAuth = async () => {
-      if (checkAuth()) {
-        try {
-          const profile = await authAPI.getProfile();
-          setUser(profile.user || profile);
-          setIsAuthenticated(true);
-        } catch (error) {
-          // Token is invalid, remove it
-          removeAuthToken();
-          setIsAuthenticated(false);
-        }
+      try {
+        // This works for both Authorization header token and HttpOnly cookie session.
+        const profile = await authAPI.getProfile();
+        setUser(profile.user || profile);
+        setIsAuthenticated(true);
+      } catch (error) {
+        removeAuthToken();
+        setIsAuthenticated(false);
       }
       setLoading(false);
     };
@@ -66,7 +64,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await authAPI.signOut();
+    } catch {
+      // Ignore sign-out API failures and still clear client state.
+    }
     removeAuthToken();
     setUser(null);
     setIsAuthenticated(false);

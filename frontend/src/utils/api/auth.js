@@ -27,7 +27,12 @@ export const authAPI = {
   signOut: () => api.post('/auth/sign-out'),
 
   // Logout user (client-side)
-  logout: () => {
+  logout: async () => {
+    try {
+      await api.post('/auth/sign-out');
+    } catch {
+      // Ignore sign-out API failures and still clear local auth state.
+    }
     removeAuthToken();
     window.location.href = '/signin';
   },

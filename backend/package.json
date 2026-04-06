@@ -28,12 +28,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.0",
     "multer": "^2.0.2",
-    "nodemailer": "^8.0.4",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
     "passport-google": "^0.1.0",
     "passport-google-oauth20": "^2.0.0",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "resend": "^6.10.0"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
