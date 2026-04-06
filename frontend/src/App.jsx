@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
 import { AdminNotificationProvider } from "./context/AdminNotificationContext"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -24,6 +25,25 @@ import StudentManagement from "./pages/admin/StudentManagement"
 import StudentDetail from "./pages/admin/StudentDetail"
 import ReportsAnalytics from "./pages/admin/ReportsAnalytics"
 import AdminProfile from "./pages/admin/AdminProfile"
+import { useAuth } from "./context/AuthContext"
+
+function HomeRoute() {
+  const { isAuthenticated, loading, user } = useAuth()
+
+  if (loading) {
+    return <div className="min-h-screen bg-white" />
+  }
+
+  if (isAuthenticated) {
+    if (user?.Role === "admin") {
+      return <Navigate to="/admin/dashboard" replace />
+    }
+
+    return <Navigate to="/dashboard" replace />
+  }
+
+  return <LandingPage />
+}
 
 function App() {
   return (
@@ -34,8 +54,8 @@ function App() {
         <main>
           <Routes>
             <Route path="*" element={<NotFound />} />
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/home" element={<LandingPage />} />
+            <Route path="/" element={<HomeRoute />} />
+            <Route path="/home" element={<HomeRoute />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

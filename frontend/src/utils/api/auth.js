@@ -9,7 +9,7 @@ export const authAPI = {
   signIn: (credentials) => api.post('/auth/login', credentials),
 
   // Get user profile
-  getProfile: () => api.get('/auth/profile'),
+  getProfile: (config = {}) => api.get('/auth/profile', config),
 
   // Update user profile
   updateProfile: async (profileData) => {
@@ -34,7 +34,7 @@ export const authAPI = {
       // Ignore sign-out API failures and still clear local auth state.
     }
     removeAuthToken();
-    window.location.href = '/signin';
+    window.location.href = '/';
   },
 
   // Verify email OTP

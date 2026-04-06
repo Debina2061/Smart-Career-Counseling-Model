@@ -51,9 +51,9 @@ api.interceptors.response.use(
     // Handle 401 Unauthorized - redirect to login
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      // Only redirect if not already on auth pages
-      if (!window.location.pathname.includes('/signin') && !window.location.pathname.includes('/signup')) {
-        window.location.href = '/signin';
+      // Allow silent auth checks to fail without forcing a navigation.
+      if (!error.config?.skipAuthRedirect) {
+        window.location.href = '/';
       }
     }
 

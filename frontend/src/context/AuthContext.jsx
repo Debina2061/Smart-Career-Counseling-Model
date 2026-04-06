@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       try {
         // This works for both Authorization header token and HttpOnly cookie session.
-        const profile = await authAPI.getProfile();
+        const profile = await authAPI.getProfile({ skipAuthRedirect: true });
         setUser(profile.user || profile);
         setIsAuthenticated(true);
       } catch (error) {
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     removeAuthToken();
     setUser(null);
     setIsAuthenticated(false);
-    window.location.href = '/signin';
+    window.location.href = '/';
   };
 
   const updateUser = (userData) => {
