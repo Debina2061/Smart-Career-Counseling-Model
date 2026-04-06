@@ -49,7 +49,9 @@ api.interceptors.response.use(
     }
 
     // Handle 401 Unauthorized - redirect to login
-    if (error.response?.status === 401) {
+    // Skip redirect for login/auth endpoints (failed login should show error, not redirect)
+    const isAuthEndpoint = error.config?.url?.includes('/auth/');
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       localStorage.removeItem('token');
       // Allow silent auth checks to fail without forcing a navigation.
       if (!error.config?.skipAuthRedirect) {
