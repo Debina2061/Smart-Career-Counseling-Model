@@ -1,0 +1,23 @@
+{
+  "quality_metrics": {
+    "accuracy": 0.9058333333333334,
+    "top_2_accuracy": 0.985,
+    "train_rows": 12000,
+    "synthetic_rows": 12000,
+    "optional_rows_used": 0
+  },
+  "career_metrics": {
+    "accuracy": 0.8058252427184466,
+    "top_3_accuracy": 0.926437640029873
+  },
+  "job_fit_metrics": {
+    "accuracy": 0.6019607843137255,
+    "top_2_accuracy": 0.9166666666666666
+  },
+  "optional_dataset_rows": 0,
+  "artifacts": [
+    "artifacts\\quality_bundle.joblib",
+    "artifacts\\career_bundle.joblib",
+    "artifacts\\job_fit_bundle.joblib"
+  ]
+}

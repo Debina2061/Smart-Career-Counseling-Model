@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Manrope:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --font-sans: 'Manrope', sans-serif;
+  --font-serif: 'Fraunces', serif;
+  --font-landing: 'Plus Jakarta Sans', sans-serif;
+  --landing-bg: #f3efe6;
+  --landing-surface: #ffffff;
+  --landing-line: #d8ddd5;
+  --landing-title: #162033;
+  --landing-text: #526274;
+  --landing-muted: #6b7a8f;
+  --landing-primary: #174e86;
+  --landing-primary-dark: #123f6d;
+  --landing-max-width: 1380px;
+  --landing-gutter: clamp(1rem, 3.2vw, 3.5rem);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+}
+
+.landing-shell {
+  font-family: var(--font-landing);
+  color: var(--landing-title);
+  background: linear-gradient(180deg, #f6f8fc 0%, #f3f5fb 42%, #f7f8fc 100%);
+  overflow-x: clip;
+}
+
+.landing-shell h1,
+.landing-shell h2,
+.landing-shell h3,
+.landing-shell h4,
+.landing-shell h5,
+.landing-shell h6 {
+  font-family: var(--font-landing);
+}
+
+.landing-display {
+  font-family: var(--font-landing);
+  letter-spacing: -0.02em;
+}
+
+.landing-header {
+  border-bottom: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+}
+
+.landing-container {
+  width: min(var(--landing-max-width), calc(100% - (var(--landing-gutter) * 2)));
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .landing-container {
+    width: calc(100% - 1.25rem);
+  }
+}
+
+.landing-hero {
+  min-height: clamp(580px, 86vh, 980px);
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .landing-hero {
+    min-height: auto;
+    display: block;
+  }
+}
+
+.landing-surface {
+  border: 1px solid #e5e7eb;
+  background: var(--landing-surface);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.1);
+}
+
+@media (max-width: 768px) {
+  .landing-display {
+    letter-spacing: -0.015em;
+  }
+
+  .landing-shell {
+    background: linear-gradient(180deg, #f6f8fc 0%, #f3f5fb 50%, #f7f8fc 100%);
+  }
+}
+
+.reveal-rise {
+  animation: revealRise 0.72s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.reveal-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.reveal-delay-3 {
+  animation-delay: 0.3s;
+}
+
+@keyframes revealRise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-rise,
+  .reveal-delay-1,
+  .reveal-delay-2,
+  .reveal-delay-3 {
+    animation: none;
+  }
+}
+
+.admin-scope select,
+.admin-scope option {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+.admin-scope select:disabled {
+  color: #94a3b8;
+  background-color: #f1f5f9;
+}
+
+/* Admin scope enhanced text visibility */
+.admin-scope input,
+.admin-scope textarea {
+  color: #0f172a;
+  background-color: #f8fafc;
+}
+
+.admin-scope input::placeholder,
+.admin-scope textarea::placeholder {
+  color: #94a3b8;
+}
+
+.admin-scope input:focus,
+.admin-scope textarea:focus,
+.admin-scope select:focus {
+  outline: none;
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.admin-scope input[type="file"] {
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.admin-scope table th {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.admin-scope table td {
+  color: #334155;
+}
+
+/* Toast slide-in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+}
+/* Markdown content styling for chatbot */
+.markdown-content {
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.markdown-content p {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content pre {
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.markdown-content code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.markdown-content li {
+  margin-bottom: 0.25rem;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 1rem 0;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0;
+}

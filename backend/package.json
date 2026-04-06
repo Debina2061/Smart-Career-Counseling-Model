@@ -1,0 +1,55 @@
+{
+  "name": "ats",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --watch ./src/server.js",
+    "dev": "concurrently \"node --watch ./src/server.js\" \"python -m uvicorn main:app --app-dir ml/api --host 127.0.0.1 --port 8000 --reload\"",
+    "dev:backend-only": "nodemon ./src/server.js",
+    "dev:ml-only": "python -m uvicorn main:app --app-dir ml/api --host 127.0.0.1 --port 8000 --reload",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:watch": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.8.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "groq-sdk": "^1.1.2",
+    "inngest": "^3.48.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.0.0",
+    "multer": "^2.0.2",
+    "nodemailer": "^8.0.4",
+    "passport": "^0.7.0",
+    "passport-github": "^1.1.0",
+    "passport-google": "^0.1.0",
+    "passport-google-oauth20": "^2.0.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "jest": "^30.3.0",
+    "mongodb-memory-server": "^11.0.1",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src/tests"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/tests/jest.setup.js"
+    ]
+  }
+}
