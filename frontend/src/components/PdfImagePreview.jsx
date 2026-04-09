@@ -96,7 +96,11 @@ function PdfImagePreview({ pdfUrl, maxPages = 3, showPageCounter = true }) {
         setImages(pageImages);
       } catch (err) {
         if (cancelled) return;
-        setError(err?.message || 'Unable to render resume preview');
+        if (err?.message === 'Failed to fetch') {
+          setError('Unable to reach resume service. Check that the backend API is running and reachable.');
+        } else {
+          setError(err?.message || 'Unable to render resume preview');
+        }
       } finally {
         if (!cancelled) {
           setLoading(false);
