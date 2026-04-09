@@ -40,6 +40,13 @@ function Profile() {
 
   const [newSkill, setNewSkill] = useState('')
   const [newInterest, setNewInterest] = useState('')
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
+  const [passwordLoading, setPasswordLoading] = useState(false)
+  const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' })
 
   // ── Email verification OTP state ──
   const OTP_LENGTH = 6
@@ -278,6 +285,17 @@ function Profile() {
     setProfileData({ ...profileData, [name]: value })
   }
 
+  const handleUserProfileChange = (e) => {
+    const { name, value } = e.target
+    setUserProfile((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handlePasswordInputChange = (e) => {
+    const { name, value } = e.target
+    setPasswordForm((prev) => ({ ...prev, [name]: value }))
+    setPasswordMessage({ type: '', text: '' })
+  }
+
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -373,6 +391,7 @@ function Profile() {
 
     try {
       const updatePayload = {
+        name: userProfile.name,
         age: profileData.age,
         gender: profileData.gender,
         educationLevel: profileData.educationLevel,
@@ -405,6 +424,45 @@ function Profile() {
       setMessage({ type: 'error', text: error.message || 'Failed to save changes' });
     } finally {
       setLoading(false);
+    }
+  }
+
+  const handleChangePassword = async () => {
+    setPasswordMessage({ type: '', text: '' })
+
+    if (!passwordForm.oldPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'Please fill in all password fields.' })
+      return
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordMessage({ type: 'error', text: 'New password must be at least 6 characters long.' })
+      return
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'New password and confirm password do not match.' })
+      return
+    }
+
+    if (passwordForm.oldPassword === passwordForm.newPassword) {
+      setPasswordMessage({ type: 'error', text: 'New password must be different from old password.' })
+      return
+    }
+
+    setPasswordLoading(true)
+    try {
+      const response = await authAPI.changePassword({
+        oldPassword: passwordForm.oldPassword,
+        newPassword: passwordForm.newPassword,
+      })
+
+      setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' })
+      setPasswordMessage({ type: 'success', text: response?.message || 'Password changed successfully.' })
+    } catch (error) {
+      setPasswordMessage({ type: 'error', text: error.message || 'Failed to change password.' })
+    } finally {
+      setPasswordLoading(false)
     }
   }
 
@@ -616,9 +674,10 @@ function Profile() {
                       <label className="mb-1 block text-sm font-semibold text-slate-700">Full Name</label>
                       <input
                         type="text"
+                        name="name"
                         value={userProfile.name}
-                        disabled
-                        className="w-full rounded-lg border border-slate-200 bg-[#f8fafc] px-4 py-2 text-slate-600"
+                        onChange={handleUserProfileChange}
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-900 focus:border-[#5b5ee7] focus:outline-none"
                       />
                     </div>
 
@@ -843,6 +902,72 @@ function Profile() {
 
               {activeTab === 'account' && (
                 <div className="space-y-6">
+                  <div className="rounded-xl border border-slate-200 bg-white p-6">
+                    <h3 className="text-2xl font-bold text-slate-900 mb-6">Change Password</h3>
+
+                    {passwordMessage.text && (
+                      <div
+                        className={`mb-4 rounded-lg border px-4 py-3 text-sm ${
+                          passwordMessage.type === 'success'
+                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                            : 'border-rose-200 bg-rose-50 text-rose-700'
+                        }`}
+                      >
+                        {passwordMessage.text}
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <label className="mb-1 block text-sm font-semibold text-slate-700">Current Password</label>
+                        <input
+                          type="password"
+                          name="oldPassword"
+                          value={passwordForm.oldPassword}
+                          onChange={handlePasswordInputChange}
+                          autoComplete="current-password"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-900 focus:border-[#5b5ee7] focus:outline-none"
+                          placeholder="Enter current password"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-slate-700">New Password</label>
+                        <input
+                          type="password"
+                          name="newPassword"
+                          value={passwordForm.newPassword}
+                          onChange={handlePasswordInputChange}
+                          autoComplete="new-password"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-900 focus:border-[#5b5ee7] focus:outline-none"
+                          placeholder="Enter new password"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-slate-700">Confirm New Password</label>
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          value={passwordForm.confirmPassword}
+                          onChange={handlePasswordInputChange}
+                          autoComplete="new-password"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-900 focus:border-[#5b5ee7] focus:outline-none"
+                          placeholder="Re-enter new password"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleChangePassword}
+                      disabled={passwordLoading}
+                      className="mt-6 rounded-lg bg-[#6d5ef7] px-6 py-2 text-sm font-semibold text-white transition hover:bg-[#5a4ee0] disabled:opacity-50"
+                    >
+                      {passwordLoading ? 'Updating Password...' : 'Update Password'}
+                    </button>
+                  </div>
+
                   <div className="rounded-xl border border-slate-200 bg-white p-6">
                     <h3 className="text-2xl font-bold text-slate-900 mb-6">Email Verification</h3>
 
