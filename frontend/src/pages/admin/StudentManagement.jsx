@@ -44,14 +44,18 @@ function buildAdminResumePdfUrl(userId, resumePdfPath) {
   if (!userId) return null;
 
   const token = localStorage.getItem('token');
-  const apiBase =
-    (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : ''))
-      .replace(/\/$/, '');
   const endpoint = resumePdfPath || `/admin/users/${userId}/resume/pdf`;
-  const separator = endpoint.includes('?') ? '&' : '?';
+  const isAbsolute = /^https?:\/\//i.test(endpoint);
+  const apiBase = isAbsolute ? '' : (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const normalizedEndpoint = isAbsolute
+    ? endpoint
+    : endpoint.startsWith('/')
+      ? endpoint
+      : `/${endpoint}`;
+  const separator = normalizedEndpoint.includes('?') ? '&' : '?';
   const query = token ? `${separator}token=${encodeURIComponent(token)}` : '';
 
-  return `${apiBase}${endpoint}${query}`;
+  return `${apiBase}${normalizedEndpoint}${query}`;
 }
 
 function StudentManagement() {
