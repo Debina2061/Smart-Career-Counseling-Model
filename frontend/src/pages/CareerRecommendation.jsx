@@ -104,6 +104,94 @@ const getDefaultCompanies = (category) => {
 const getFallbackFindJobsUrl = (careerTitle) =>
   `https://www.google.com/search?q=${encodeURIComponent(`${careerTitle} jobs`)}`;
 
+const DEFAULT_JOB_PORTALS = [
+  { portal_name: 'KumariJob', base_url: 'https://www.kumarijob.com/search?keyword=' },
+  { portal_name: 'MeroJob', base_url: 'https://merojob.com/search/?q=' },
+  { portal_name: 'JobsNepal', base_url: 'https://www.jobsnepal.com/search?keyword=' },
+  { portal_name: 'RamroJob', base_url: 'https://www.ramrojob.com/search?q=' },
+  { portal_name: 'InternSathi', base_url: 'https://internsathi.com/search?q=' },
+];
+
+const buildKumariSearchUrl = (jobTitle) => {
+  const title = String(jobTitle || '').trim();
+  const params = new URLSearchParams({
+    keyword: title,
+    q: title,
+    search: title,
+  });
+  return `https://www.kumarijob.com/search?${params.toString()}`;
+};
+
+const buildJobsNepalSearchUrl = (jobTitle) => {
+  const title = String(jobTitle || '').trim();
+  const params = new URLSearchParams({ q: title });
+  return `https://www.jobsnepal.com/search?${params.toString()}`;
+};
+
+const buildFallbackJobPortals = (careerTitle) => {
+  const title = String(careerTitle || '').trim();
+  if (!title) return [];
+
+  const encodedTitle = encodeURIComponent(title);
+  return DEFAULT_JOB_PORTALS.map((portal) => {
+    const portalName = portal.portal_name.toLowerCase();
+
+    if (portalName.includes('kumari')) {
+      return {
+        portal_name: portal.portal_name,
+        search_url: buildKumariSearchUrl(title),
+      };
+    }
+
+    if (portalName.includes('jobsnepal')) {
+      return {
+        portal_name: portal.portal_name,
+        search_url: buildJobsNepalSearchUrl(title),
+      };
+    }
+
+    return {
+      portal_name: portal.portal_name,
+      search_url: `${portal.base_url}${encodedTitle}`,
+    };
+  });
+};
+
+const getCareerJobPortals = (career) => {
+  const providedPortals = Array.isArray(career?.jobSearch?.job_portals)
+    ? career.jobSearch.job_portals.filter(
+        (portal) =>
+          portal && typeof portal.portal_name === 'string' && typeof portal.search_url === 'string'
+      )
+    : [];
+
+  if (providedPortals.length > 0) {
+    const jobTitle = career?.careerName || career?.title || 'jobs';
+
+    return providedPortals.map((portal) => {
+      const portalName = portal.portal_name.toLowerCase();
+
+      if (portalName.includes('kumari')) {
+        return {
+          ...portal,
+          search_url: buildKumariSearchUrl(jobTitle),
+        };
+      }
+
+      if (portalName.includes('jobsnepal')) {
+        return {
+          ...portal,
+          search_url: buildJobsNepalSearchUrl(jobTitle),
+        };
+      }
+
+      return portal;
+    });
+  }
+
+  return buildFallbackJobPortals(career?.careerName || career?.title || 'jobs');
+};
+
 function CareerRecommendation() {
   const { user } = useAuth();
   const location = useLocation();
@@ -434,7 +522,8 @@ function CareerRecommendation() {
   }, [careerMatches, searchTerm, activeFilter]);
 
   const openFindJobs = (career) => {
-    const firstPortal = career?.jobSearch?.job_portals?.[0];
+    const portals = getCareerJobPortals(career);
+    const firstPortal = portals[0];
     const url = firstPortal?.search_url || getFallbackFindJobsUrl(career.title || 'jobs');
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -612,6 +701,26 @@ function CareerRecommendation() {
                       </div>
                     </div>
 
+                    <div className="mt-4">
+                      <p className="text-xs text-slate-500">Job Links</p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {getCareerJobPortals(career)
+                          .slice(0, 4)
+                          .map((portal) => (
+                            <a
+                              key={`${career.title}-${portal.portal_name}`}
+                              href={portal.search_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 rounded-md border border-[#d9d6ff] bg-[#f7f6ff] px-2.5 py-1 text-xs font-semibold text-[#4a43c7] transition hover:bg-[#efecff]"
+                            >
+                              <FaExternalLinkAlt className="text-[10px]" />
+                              {portal.portal_name}
+                            </a>
+                          ))}
+                      </div>
+                    </div>
+
                     <div className="mt-5 grid grid-cols-2 gap-2">
                       <button
                         onClick={() => handleViewDetails(career)}
@@ -730,30 +839,18 @@ function CareerRecommendation() {
                 <section>
                   <h4 className="text-2xl font-bold text-slate-900">Find Jobs On</h4>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {detailsCareer.jobSearch?.job_portals?.length > 0 ? (
-                      detailsCareer.jobSearch.job_portals.map((portal) => (
-                        <a
-                          key={`portal-${portal.portal_name}`}
-                          href={portal.search_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 rounded-lg border border-[#d9d6ff] bg-[#f7f6ff] px-3 py-1.5 text-sm font-semibold text-[#4a43c7] transition hover:bg-[#efecff]"
-                        >
-                          <FaExternalLinkAlt className="text-xs" />
-                          {portal.portal_name}
-                        </a>
-                      ))
-                    ) : (
+                    {getCareerJobPortals(detailsCareer).map((portal) => (
                       <a
-                        href={getFallbackFindJobsUrl(detailsCareer.careerName || 'jobs')}
+                        key={`portal-${portal.portal_name}`}
+                        href={portal.search_url}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-2 rounded-lg border border-[#d9d6ff] bg-[#f7f6ff] px-3 py-1.5 text-sm font-semibold text-[#4a43c7] transition hover:bg-[#efecff]"
                       >
                         <FaExternalLinkAlt className="text-xs" />
-                        Google Jobs Search
+                        {portal.portal_name}
                       </a>
-                    )}
+                    ))}
                   </div>
                 </section>
 
