@@ -11,7 +11,7 @@ const DEFAULT_JOB_PORTALS = [
   },
   {
     name: "JobsNepal",
-    base_url: "https://www.jobsnepal.com/search?keyword=",
+    base_url: "https://www.jobsnepal.com/search?q=",
     query_param: ""
   },
   {
