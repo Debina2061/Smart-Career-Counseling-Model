@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/AdminLayout';
 import { careerAPI } from '../../utils/api';
 import { useAdminNotification } from '../../context/AdminNotificationContext';
 
 function SkillsKeywords() {
   const [careers, setCareers] = useState([]);
+  const [loadingCareers, setLoadingCareers] = useState(false);
   const [selectedCareerId, setSelectedCareerId] = useState('');
   const [careerDetail, setCareerDetail] = useState(null);
   const [technicalSkill, setTechnicalSkill] = useState('');
@@ -14,16 +16,23 @@ function SkillsKeywords() {
 
   useEffect(() => {
     const loadCareers = async () => {
+      setLoadingCareers(true);
       try {
         const response = await careerAPI.getAllCareers({ limit: 100 });
         const payload = response?.data || response;
-        setCareers(payload?.careers || []);
+        const careersList =
+          payload?.careers ||
+          payload?.data?.careers ||
+          (Array.isArray(payload) ? payload : []);
+        setCareers(careersList);
       } catch (err) {
         notify(err.message || 'Failed to load careers', 'error');
+      } finally {
+        setLoadingCareers(false);
       }
     };
     loadCareers();
-  }, []);
+  }, [notify]);
 
   const loadCareerDetail = async (careerId) => {
     try {
@@ -93,15 +102,25 @@ function SkillsKeywords() {
         <select
           value={selectedCareerId}
           onChange={handleCareerChange}
+          disabled={loadingCareers || careers.length === 0}
           className="w-full mt-2 px-4 py-2 border border-slate-200 rounded-lg"
         >
-          <option value="">Choose a career</option>
+          <option value="">{loadingCareers ? 'Loading careers...' : 'Choose a career'}</option>
           {careers.map((career) => (
             <option key={career._id} value={career._id}>
               {career.careerName}
             </option>
           ))}
         </select>
+
+        {!loadingCareers && careers.length === 0 && (
+          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            No career profiles found yet. Create career profiles first to manage skills and keywords.
+            <Link to="/admin/careers" className="ml-2 font-semibold underline">
+              Go to Career Profiles
+            </Link>
+          </div>
+        )}
       </div>
 
       {careerDetail && (
