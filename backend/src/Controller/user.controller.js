@@ -284,7 +284,7 @@ export const getResumePdf = async (req, res) => {
 
     const fileName = sanitizeResumeFilename(resume.resumeFileName || "resume.pdf");
     const candidateUrls = buildResumeCandidateUrls(resume);
-    const isPreviewRequest = req.headers["x-resume-preview"] === "1" || req.query?.preview === "1";
+    const isPreviewRequest = Boolean(req.headers["x-resume-preview"]) || req.query?.preview === "1" || req.query?.preview === "true";
 
     for (const url of candidateUrls) {
       if (!url) continue;

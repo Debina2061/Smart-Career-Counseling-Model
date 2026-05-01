@@ -467,7 +467,7 @@ function Profile() {
   }
 
   const resumePdfUrl = resume?.resumeUrl
-    ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/user/resume/pdf?token=${encodeURIComponent(localStorage.getItem('token') || '')}&t=${encodeURIComponent(resume?.updatedAt || '')}`
+    ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/user/resume/pdf?token=${encodeURIComponent(localStorage.getItem('token') || '')}&t=${encodeURIComponent(resume?.updatedAt || '')}&preview=1`
     : '';
   const completionChecks = [
     Boolean(userProfile.name && userProfile.email),
